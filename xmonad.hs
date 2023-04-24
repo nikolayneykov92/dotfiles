@@ -2,6 +2,7 @@ import XMonad
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
 import XMonad.Layout.Spacing
+import XMonad.Layout.NoBorders
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
 import Graphics.X11.ExtraTypes.XF86
@@ -28,6 +29,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
     , ((0, xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
     , ((0, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
+    , ((0, xF86XK_MonBrightnessUp), spawn "lux -a 10%")
+    , ((0, xF86XK_MonBrightnessDown), spawn "lux -s 10%")
     ]
     ++
 
@@ -109,10 +112,12 @@ myLayout = avoidStruts $ smartSpacingWithEdge 4 (tiled ||| Mirror tiled ||| Full
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ className =? "MPlayer"        --> doFloat
+    [ 
+      className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore ]
+    , resource  =? "kdesktop"       --> doIgnore 
+    ]
 
 ------------------------------------------------------------------------
 -- Event handling
@@ -147,12 +152,16 @@ myLogHook = dynamicLogWithPP $ xmobarPP { ppExtras = []}
 --
 -- By default, do nothing.
 myStartupHook = do
-  spawnOnce "picom &"
+  spawnOnce "picom -b &"
+  spawnOnce "xset s off &"
+  spawnOnce "xset s 0 0 &"
+  spawnOnce "xset -dpms &"
   spawnOnce "nitrogen --restore &"
-  spawnOnce "xinput set-prop 13 345 1 &"
-  spawnOnce "xinput set-prop 13 366 1 &"
+  spawnOnce "xinput set-prop 13 344 1 &"
+  spawnOnce "xinput set-prop 13 365 1 &"
   spawnOnce "setxkbmap -option ctrl:nocaps &"
   spawnOnce "xsetroot -cursor_name left_ptr &"
+
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
@@ -160,16 +169,16 @@ myStartupHook = do
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-  h <- spawnPipe "xmobar -d"
+  h <- spawnPipe "xmobar ~/.config/xmonad/xmobar.conf"
   xmonad $ docks def {
         modMask = mod4Mask,
-        terminal = "kitty",
+        terminal = "alacritty",
         clickJustFocuses = True,
         focusFollowsMouse = False,
         workspaces         = ["1","2","3","4","5","6","7","8","9"],
-        borderWidth        = 2,
-        normalBorderColor  = "#ffffff",
-        focusedBorderColor = "#0000ff",
+        borderWidth        = 1,
+        normalBorderColor  = "#000000",
+        focusedBorderColor = "#000000",
 
       -- key bindings
         keys               = myKeys,
@@ -181,7 +190,7 @@ main = do
         handleEventHook    = myEventHook,
         logHook            = dynamicLogWithPP $ xmobarPP {
             ppOutput = hPutStrLn h,
-            ppCurrent = \(ws:_) -> xmobarColor "#5555ff" "" ("[" <> [ws] <> "]"),
+            ppCurrent = \(ws:_) -> xmobarColor "#e6c446" "" [ws],
             ppHiddenNoWindows =  \(ws:_) -> [ws],
             ppOrder = \(ws:_) -> [ws]
         },

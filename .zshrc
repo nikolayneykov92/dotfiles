@@ -99,12 +99,12 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-#
-#alias _emacs="/usr/bin/emacs"
-#alias emacs="emacs -c -e(\kill-buffer\)"
+alias emacs="emacsclient -c -n -a ''"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export PATH="/home/master/.config/emacs/bin:$PATH"
+export PATH="/home/master/.local/bin:$PATH"
+source /home/master/alacritty/extra/completions/alacritty.bash
