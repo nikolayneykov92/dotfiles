@@ -1,7 +1,6 @@
 import XMonad
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
-import XMonad.Layout.Spacing
 import XMonad.Layout.NoBorders
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
@@ -13,7 +12,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     [ ((modm, xK_Return), spawn $ XMonad.terminal conf)
     , ((modm, xK_space), sendMessage NextLayout)
-    , ((modm, xK_p), spawn "dmenu_run -nb '#0e1419'")
+    , ((modm, xK_p), spawn "dmenu_run -l 5 -nf '#f8f8f2' -nb '#21222c' -sf '#21222c' -sb '#bd93f9'")
     , ((modm, xK_r), spawn "xmonad --recompile; xmonad --restart")
     , ((modm, xK_q), kill)
     , ((modm, xK_j), windows W.focusDown)
@@ -31,26 +30,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
     , ((0, xF86XK_MonBrightnessUp), spawn "lux -a 10%")
     , ((0, xF86XK_MonBrightnessDown), spawn "lux -s 10%")
+    , ((mod1Mask, xK_Shift_L), spawn "setxkbmap us")
+    , ((mod1Mask, xK_Shift_R), spawn "setxkbmap bg phonetic")
     ]
     ++
-
-    --
-    -- mod-[1..9], Switch to workspace N
-    -- mod-shift-[1..9], Move client to workspace N
-    --
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    -- ++
-
-    --
-    -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
-    -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
-    --
-    -- [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-    --     | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-    --     , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
-
 
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events
@@ -82,7 +68,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts $ smartSpacingWithEdge 4 (tiled ||| Mirror tiled ||| Full)
+myLayout = avoidStruts $ smartBorders ( tiled ||| Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -94,7 +80,7 @@ myLayout = avoidStruts $ smartSpacingWithEdge 4 (tiled ||| Mirror tiled ||| Full
      ratio   = 1/2
 
      -- Percent of screen to increment by when resizing panes
-     delta   = 3/100
+     delta   = 1/100
 
 ------------------------------------------------------------------------
 -- Window rules:
@@ -114,6 +100,7 @@ myLayout = avoidStruts $ smartSpacingWithEdge 4 (tiled ||| Mirror tiled ||| Full
 myManageHook = composeAll
     [ 
       className =? "MPlayer"        --> doFloat
+    , className =? "vlc"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore 
@@ -143,67 +130,39 @@ myLogHook = dynamicLogWithPP $ xmobarPP { ppExtras = []}
                                                                 -- , ppOrder = \(ws:_) -> [ws]
                                                               -- }
 
-------------------------------------------------------------------------
--- Startup hook
-
--- Perform an arbitrary action each time xmonad starts or is restarted
--- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
--- per-workspace layout choices.
---
--- By default, do nothing.
-myStartupHook = do
-  spawnOnce "picom -b &"
-  spawnOnce "xset s off &"
-  spawnOnce "xset s 0 0 &"
-  spawnOnce "xset -dpms &"
-  spawnOnce "nitrogen --restore &"
-  spawnOnce "xinput set-prop 13 344 1 &"
-  spawnOnce "xinput set-prop 13 365 1 &"
-  spawnOnce "setxkbmap -option ctrl:nocaps &"
-  spawnOnce "xsetroot -cursor_name left_ptr &"
-
-
-------------------------------------------------------------------------
--- Now run xmonad with all the defaults we set up.
-
--- Run xmonad with the settings you specify. No need to modify this.
---
 main = do
-  h <- spawnPipe "xmobar ~/.config/xmonad/xmobar.conf"
+  h <- spawnPipe "xmobar -x 0 ~/.config/xmonad/xmobar.conf"
   xmonad $ docks def {
-        modMask = mod4Mask,
-        terminal = "alacritty",
-        clickJustFocuses = True,
-        focusFollowsMouse = False,
-        workspaces         = ["1","2","3","4","5","6","7","8","9"],
-        borderWidth        = 1,
-        normalBorderColor  = "#000000",
-        focusedBorderColor = "#000000",
-
-      -- key bindings
-        keys               = myKeys,
-        mouseBindings      = myMouseBindings,
-
-      -- hooks, layouts
-        layoutHook         = myLayout,
-        manageHook         = myManageHook,
-        handleEventHook    = myEventHook,
-        logHook            = dynamicLogWithPP $ xmobarPP {
-            ppOutput = hPutStrLn h,
-            ppCurrent = \(ws:_) -> xmobarColor "#e6c446" "" [ws],
-            ppHiddenNoWindows =  \(ws:_) -> [ws],
-            ppOrder = \(ws:_) -> [ws]
+    modMask = mod4Mask,
+    terminal = "alacritty",
+    clickJustFocuses = True,
+    focusFollowsMouse = False,
+    workspaces         = ["1","2","3","4","5","6","7","8","9"],
+    borderWidth        = 1,
+    normalBorderColor  = "#21222c",
+    focusedBorderColor = "#bd93f9",
+    keys               = myKeys,
+    mouseBindings      = myMouseBindings,
+    layoutHook         = myLayout,
+    manageHook         = myManageHook,
+    handleEventHook    = myEventHook,
+    logHook            = dynamicLogWithPP $ xmobarPP {
+        ppOutput = hPutStrLn h,
+        ppCurrent = \(ws:_) -> xmobarColor "#bd93f9" "" [ws],
+        ppHiddenNoWindows =  \(ws:_) -> [ws],
+        ppHidden =  \(ws:_) -> [ws],
+        ppVisible =  \(ws:_) -> [ws],
+        ppOrder = \(ws:_) -> [ws]
         },
-        startupHook        = myStartupHook
-
+        startupHook = do
+                        spawnOnce "picom -b &"
+                        spawnOnce "xset s off &"
+                        spawnOnce "xset s 0 0 &"
+                        spawnOnce "xset -dpms &"
+                        spawnOnce "nitrogen --restore &"
+                        spawnOnce "xinput set-prop 13 344 1 &"
+                        spawnOnce "xinput set-prop 13 365 1 &"
+                        spawnOnce "setxkbmap -option ctrl:nocaps &"
+                        spawnOnce "xsetroot -cursor_name left_ptr &"
+                        spawnOnce "emacs --daemon &"
     }
--- main = do
---   xmproc <- spawnPipe "xmobar ~/.config/xmobar/xmobar.config"
---   xmonad $ docks defaults
-
--- A structure containing your configuration settings, overriding
--- fields in the default config. Any you don't override, will
--- use the defaults defined in xmonad/XMonad/Config.hs
---
--- No need to modify this.
---
