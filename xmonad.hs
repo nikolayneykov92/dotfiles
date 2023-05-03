@@ -1,7 +1,8 @@
 import XMonad
+import XMonad.Actions.SpawnOn
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
-import XMonad.Layout.NoBorders
+import XMonad.Layout.Spacing
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
 import Graphics.X11.ExtraTypes.XF86
@@ -12,7 +13,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     [ ((modm, xK_Return), spawn $ XMonad.terminal conf)
     , ((modm, xK_space), sendMessage NextLayout)
-    , ((modm, xK_p), spawn "dmenu_run -l 5 -nf '#f8f8f2' -nb '#21222c' -sf '#21222c' -sb '#bd93f9'")
+    , ((modm, xK_p), spawn "dmenu_run -nf '#f8f8f2' -nb '#21222c' -sf '#21222c' -sb '#bd93f9'")
     , ((modm, xK_r), spawn "xmonad --recompile; xmonad --restart")
     , ((modm, xK_q), kill)
     , ((modm, xK_j), windows W.focusDown)
@@ -68,7 +69,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts $ smartBorders ( tiled ||| Full)
+myLayout = avoidStruts $ spacingWithEdge 4 (tiled ||| Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -97,16 +98,9 @@ myLayout = avoidStruts $ smartBorders ( tiled ||| Full)
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
-myManageHook = composeAll
-    [ 
-      className =? "MPlayer"        --> doFloat
-    , className =? "vlc"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore 
-    ]
+myManageHook = mempty
 
-------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 -- Event handling
 
 -- * EwmhDesktops users should change this to ewmhDesktopsEventHook
@@ -117,18 +111,6 @@ myManageHook = composeAll
 --
 myEventHook = mempty
 
-------------------------------------------------------------------------
--- Status bars and logging
-
--- Perform an arbitrary action on each internal state change or X event.
--- See the 'XMonad.Hooks.DynamicLog' extension for examples.
---
-myLogHook = dynamicLogWithPP $ xmobarPP { ppExtras = []}
-    -- { ppOutput = \x -> hPutStrLn xmproc0 x
-                                                                -- >> hPutStrLn xmproc1 x
-                                                                -- , ppExtras = []
-                                                                -- , ppOrder = \(ws:_) -> [ws]
-                                                              -- }
 
 main = do
   h <- spawnPipe "xmobar -x 0 ~/.config/xmonad/xmobar.conf"
@@ -137,21 +119,21 @@ main = do
     terminal = "alacritty",
     clickJustFocuses = True,
     focusFollowsMouse = False,
-    workspaces         = ["1","2","3","4","5","6","7","8","9"],
+    workspaces         = ["1", "2", "3", "4", "5"],
     borderWidth        = 1,
-    normalBorderColor  = "#21222c",
-    focusedBorderColor = "#bd93f9",
+    normalBorderColor  = "#6272a4",
+    focusedBorderColor = "#6272a4",
     keys               = myKeys,
     mouseBindings      = myMouseBindings,
     layoutHook         = myLayout,
-    manageHook         = myManageHook,
+    manageHook         = manageSpawn <+> myManageHook,
     handleEventHook    = myEventHook,
     logHook            = dynamicLogWithPP $ xmobarPP {
         ppOutput = hPutStrLn h,
-        ppCurrent = \(ws:_) -> xmobarColor "#bd93f9" "" [ws],
-        ppHiddenNoWindows =  \(ws:_) -> [ws],
-        ppHidden =  \(ws:_) -> [ws],
-        ppVisible =  \(ws:_) -> [ws],
+        ppCurrent = \(ws) -> "<box type=Bottom width=2 mb=1 color=#bd93f9><fc=#bd93f9> " ++ ws ++ " </fc></box>",
+        ppHiddenNoWindows = \(ws) -> "<box type=Bottom width=2 mb=1 color=#f8f8f2><fc=#f8f8f2> " ++ ws ++ " </fc></box>",
+        ppHidden = \(ws) -> "<box type=Bottom width=2 mb=1 color=#f8f8f2><fc=#f8f8f2> " ++ ws ++ " </fc></box>",
+        ppVisible =  \(ws) -> "<box type=Bottom width=2 mb=1 color=#f8f8f2><fc=#f8f8f2> " ++ ws ++ " </fc></box>",
         ppOrder = \(ws:_) -> [ws]
         },
         startupHook = do
@@ -164,5 +146,4 @@ main = do
                         spawnOnce "xinput set-prop 13 365 1 &"
                         spawnOnce "setxkbmap -option ctrl:nocaps &"
                         spawnOnce "xsetroot -cursor_name left_ptr &"
-                        spawnOnce "emacs --daemon &"
     }
