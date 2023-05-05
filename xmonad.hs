@@ -130,7 +130,7 @@ main = do
     handleEventHook    = myEventHook,
     logHook            = dynamicLogWithPP $ xmobarPP {
         ppOutput = hPutStrLn h,
-        ppCurrent = \(ws) -> "<box type=Bottom width=2 mb=1 color=#73D0FF><fc=#73D0FF> " ++ ws ++ " </fc></box>",
+        ppCurrent = \(ws) -> "<box type=Bottom width=2 mb=1 color=#FFCC66><fc=#FFCC66> " ++ ws ++ " </fc></box>",
         ppHiddenNoWindows = \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
         ppHidden = \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
         ppVisible =  \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",

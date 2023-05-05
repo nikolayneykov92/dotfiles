@@ -436,7 +436,7 @@ cursor:
 
   # Thickness of the cursor relative to the cell width as floating point number
   # from `0.0` to `1.0`.
-  #thickness: 0.15
+  thickness: 0.2
 
 # Live config reload (changes require restart)
 #live_config_reload: true
@@ -916,6 +916,9 @@ colors:
   primary:
     background: '#202734'
     foreground: '#CBCCC6'
+  cursor:
+    text: '#202734'
+    cursor: '#FFCC66'
 
   # Normal colors
   normal:
