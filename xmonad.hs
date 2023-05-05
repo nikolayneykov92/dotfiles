@@ -13,7 +13,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     [ ((modm, xK_Return), spawn $ XMonad.terminal conf)
     , ((modm, xK_space), sendMessage NextLayout)
-    , ((modm, xK_p), spawn "dmenu_run -fn 'DejaVuSansMono Nerd Font-11' -nf '#a9b1d6' -nb '#1a1b26' -sf '#1a1b26' -sb '#a9b1d6'")
+    , ((modm, xK_p), spawn "dmenu_run -fn 'FiraCode Nerd Font-11' -nf '#CBCCC6' -nb '#202734' -sf '#202734' -sb '#CBCCC6'")
     , ((modm, xK_r), spawn "xmonad --recompile; xmonad --restart")
     , ((modm, xK_q), kill)
     , ((modm, xK_j), windows W.focusDown)
@@ -121,8 +121,8 @@ main = do
     focusFollowsMouse = False,
     workspaces         = ["1", "2", "3", "4", "5"],
     borderWidth        = 2,
-    normalBorderColor  = "#32344a",
-    focusedBorderColor = "#32344a",
+    normalBorderColor  = "#191E2A",
+    focusedBorderColor = "#191E2A",
     keys               = myKeys,
     mouseBindings      = myMouseBindings,
     layoutHook         = myLayout,
@@ -130,10 +130,10 @@ main = do
     handleEventHook    = myEventHook,
     logHook            = dynamicLogWithPP $ xmobarPP {
         ppOutput = hPutStrLn h,
-        ppCurrent = \(ws) -> "<box type=Bottom width=2 mb=1 color=#7aa2f7><fc=#7aa2f7> " ++ ws ++ " </fc></box>",
-        ppHiddenNoWindows = \(ws) -> "<box type=Bottom width=2 mb=1 color=#a9b1d6><fc=#a9b1d6> " ++ ws ++ " </fc></box>",
-        ppHidden = \(ws) -> "<box type=Bottom width=2 mb=1 color=#a9b1d6><fc=#a9b1d6> " ++ ws ++ " </fc></box>",
-        ppVisible =  \(ws) -> "<box type=Bottom width=2 mb=1 color=#a9b1d6><fc=#a9b1d6> " ++ ws ++ " </fc></box>",
+        ppCurrent = \(ws) -> "<box type=Bottom width=2 mb=1 color=#73D0FF><fc=#73D0FF> " ++ ws ++ " </fc></box>",
+        ppHiddenNoWindows = \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
+        ppHidden = \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
+        ppVisible =  \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
         ppOrder = \(ws:_) -> [ws]
         },
         startupHook = do
