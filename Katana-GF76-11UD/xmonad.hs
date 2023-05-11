@@ -10,10 +10,9 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-
     [ ((modm, xK_Return), spawn $ XMonad.terminal conf)
     , ((modm, xK_space), sendMessage NextLayout)
-    , ((modm, xK_p), spawn "dmenu_run -fn 'FiraCode Nerd Font-11' -nf '#CBCCC6' -nb '#202734' -sf '#202734' -sb '#CBCCC6'")
+    , ((modm, xK_p), spawn "dmenu_run -fn 'FiraCode Nerd Font-11' -nf '#839496' -nb '#002b36' -sf '#002b36' -sb '#d33682'")
     , ((modm, xK_r), spawn "xmonad --recompile; xmonad --restart")
     , ((modm, xK_q), kill)
     , ((modm, xK_j), windows W.focusDown)
@@ -121,8 +120,8 @@ main = do
     focusFollowsMouse = False,
     workspaces         = ["1", "2", "3", "4", "5"],
     borderWidth        = 2,
-    normalBorderColor  = "#191E2A",
-    focusedBorderColor = "#191E2A",
+    normalBorderColor  = "#002b36",
+    focusedBorderColor = "#002b36",
     keys               = myKeys,
     mouseBindings      = myMouseBindings,
     layoutHook         = myLayout,
@@ -130,10 +129,10 @@ main = do
     handleEventHook    = myEventHook,
     logHook            = dynamicLogWithPP $ xmobarPP {
         ppOutput = hPutStrLn h,
-        ppCurrent = \(ws) -> "<box type=Bottom width=2 mb=1 color=#FFCC66><fc=#FFCC66> " ++ ws ++ " </fc></box>",
-        ppHiddenNoWindows = \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
-        ppHidden = \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
-        ppVisible =  \(ws) -> "<box type=Bottom width=2 mb=1 color=#CBCCC6><fc=#CBCCC6> " ++ ws ++ " </fc></box>",
+        ppCurrent = \(ws) -> "<box type=Bottom width=2 mb=2 color=#d33682><fc=#d33682> " ++ ws ++ " </fc></box>",
+        ppHiddenNoWindows = \(ws) -> "<box type=Bottom width=2 mb=2 color=#839496><fc=#839496> " ++ ws ++ " </fc></box>",
+        ppHidden = \(ws) -> "<box type=Bottom width=2 mb=2 color=#839496><fc=#839496> " ++ ws ++ " </fc></box>",
+        ppVisible =  \(ws) -> "<box type=Bottom width=2 mb=2 color=#839496><fc=#839496> " ++ ws ++ " </fc></box>",
         ppOrder = \(ws:_) -> [ws]
         },
         startupHook = do
